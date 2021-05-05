@@ -20,6 +20,12 @@ type Car {
 	manufacturer: Manufacturers! # use an enum!
 }
 
+type Mutation {
+    addCar(name: String!, manufacturer: String!): Car!
+    updateCar(id: Int!, name: String, manufacturer: Manufacturers): Car!
+    deleteCar(id: Int!): Car!
+}
+
 type Time {
     hour: Int!
     minute: Int!
@@ -64,6 +70,33 @@ const root = {
     lastCar: () => {
         return carList[carList.length - 1];
     },
+    carsInRange: ({start, count}) => {
+        let stop = start + count;
+        return carList.slice(start, stop);
+    },
+    addCar: ({ name, manufacturer }) => {
+		const car = { name, manufacturer }
+		carList.push(car)
+		return car
+    },
+    updateCar: ({ id, name, manufacturer}) => {
+		const car = carList[id]  // is there anything at this id? 
+		if (car === undefined) { // Id not return null
+			return null 
+		}
+    // if name or species was not included use the original
+		car.name = name || car.name 
+		car.species = manufacturer || car.manufacturer
+		return pet
+    },
+    deleteCar: (({id}) => {
+        if(id < carList.length){
+            let car = carList[id]
+            carList.splice(id, 1);
+            return car
+        }
+        return null
+    }),
     getTime: () => {
         let d = new Date();
         return {hour: d.getHours, minute: d.getMinutes, second: d.getSeconds};
